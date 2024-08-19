@@ -30,9 +30,9 @@ jobs:
       - name: Install Package Python
         run: |
           pip install pyinstaller
-        #   pip install pandas
-        #   pip install numpy
-        #   pip install openpyxl
+          pip install requests
+          pip install datetime
+          pip install pickle
       
       - name: Install GitHub CLI
         run: |
