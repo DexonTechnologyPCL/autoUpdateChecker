@@ -32,7 +32,6 @@ jobs:
           pip install pyinstaller
           pip install requests
           pip install datetime
-          pip install pickle
       
       - name: Install GitHub CLI
         run: |

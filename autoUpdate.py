@@ -1,7 +1,6 @@
 import os
 import datetime
 import requests
-import pickle
 
 # Google Drive public link
 GOOGLE_DRIVE_LINK = "https://drive.google.com/uc?export=download&id=1tuEWr7LQ5_6CRzLxjghG4tNvvekKa0ZA"
