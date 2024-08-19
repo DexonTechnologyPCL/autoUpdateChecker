@@ -40,7 +40,7 @@ jobs:
           
       - name: Compile the Script
         run: |
-          pyinstaller --onefile ExcelToDB.py
+          pyinstaller --onefile autoUpdate.py
 
       - name: Delete existing release
         shell: pwsh
