@@ -75,7 +75,7 @@ jobs:
       - name: Download Release Asset
         shell: pwsh
         run: |
-          $downloadPath = "C:\Users\suwannee.thongtha\Downloads\"
+          $downloadPath = "C:\Users\suwannee.thongtha\Downloads"
           if (!(Test-Path -Path $downloadPath)) {
             New-Item -ItemType Directory -Force -Path $downloadPath
           }
@@ -89,3 +89,9 @@ jobs:
           }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload .exe as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: autoUpdate
+          path: C:\Users\suwannee.thongtha\Downloads\autoUpdate.exe
