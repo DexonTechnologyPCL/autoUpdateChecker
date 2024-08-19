@@ -1,29 +1,27 @@
-
 name: autoUpdateChecker
 
 on: [push]
 
-
 permissions:
   contents: write
   discussions: write
-  
+
 env:
   DOWNLOAD_REPO: "DexonTechnologyPCL/autoUpdateChecker"
-      
+
 jobs:
   build-and-test:
     runs-on: windows-latest
-
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout Source Repo
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      
-      - name: Install dependencies 
+          python-version: "3.11"
+
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
 
@@ -32,11 +30,11 @@ jobs:
           pip install pyinstaller
           pip install requests
           pip install datetime
-      
+
       - name: Install GitHub CLI
         run: |
           choco install gh -y
-          
+
       - name: Compile the Script
         run: |
           pyinstaller --onefile autoUpdate.py
@@ -51,7 +49,7 @@ jobs:
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Create Release
         id: create_release
         shell: pwsh
@@ -74,22 +72,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-# Download .exe file in release
-      - name: Create destination directory
-        run: mkdir D:\testload
-
-      - name: Download release asset
+      - name: Download Release Asset
+        shell: pwsh
         run: |
-            gh release download --repo ${{ env.DOWNLOAD_REPO }} --pattern "autoUpdate.exe" --dir "D:\testload"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Verify download
-        run: | 
-          if (Test-Path "D:\testload\autoUpdate.exe") {
-            Write-Output "File successfully downloaded"
+          $releaseInfo = gh release view v1.0.0 --repo ${{ env.DOWNLOAD_REPO }} --json assets
+          $assetUrl = ($releaseInfo | ConvertFrom-Json).assets | Where-Object { $_.name -like "*.exe" } | Select-Object -ExpandProperty url
+          if ($assetUrl) {
+            $downloadPath = "D:\autoUpdate.exe"
+            Invoke-WebRequest -Uri $assetUrl -OutFile $downloadPath
+            Write-Output "Downloaded autoUpdate.exe to $downloadPath"
           } else {
-            Write-Error "File download failed"
+            Write-Error "No .exe asset found in the release"
             exit 1
           }
-          
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
