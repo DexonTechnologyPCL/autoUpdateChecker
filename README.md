@@ -4,4 +4,4 @@
 2. setup wget in edit environment variable
 3. open cmd and go to path for past file
 4. run cmd : wget autoUpdate.exe https://github.com/DexonTechnologyPCL/autoUpdateChecker/releases/download/v1.0.0/autoUpdate.exe
-5. for calling function: autoUpdate.exe [file_path]
+
