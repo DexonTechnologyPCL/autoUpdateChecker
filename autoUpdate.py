@@ -1,16 +1,10 @@
 import os
 import datetime
 import requests
+import argparse
 
 # Google Drive public link
 GOOGLE_DRIVE_LINK = "https://drive.google.com/uc?export=download&id=1tuEWr7LQ5_6CRzLxjghG4tNvvekKa0ZA"
-
-# Function to get the path from the file name.
-def find_file(search_dir, file_name):
-    for root, dirs, files in os.walk(search_dir):
-        if file_name in files:
-            return os.path.join(root, file_name)
-    return None
 
 # Function to compare a local file with a file on Google Drive.
 def check_file_update(file_path):
@@ -41,20 +35,16 @@ def check_file_update(file_path):
         print(f"An error occurred: {e}")
 
 def main():
-    # Local file path
-    file_name = "file_version.txt"
-    search_dir = "D:\\autoUpdateChecker"
-    LOCAL_FILE_PATH = find_file(search_dir, file_name)
-    #LOCAL_FILE_PATH = "D:\\autoUpdateChecker\\file_version.txt"
+    parser = argparse.ArgumentParser(description="Check or download a file from Google Drive.")
+    parser.add_argument("file_path", type=str, help="Path to the local file")
+    args = parser.parse_args()
     
-    if LOCAL_FILE_PATH:
-        print("file name: ", LOCAL_FILE_PATH)
+    LOCAL_FILE_PATH = args.file_path
+    if os.path.exists(LOCAL_FILE_PATH):
+        print("Path file: ", LOCAL_FILE_PATH)
         check_file_update(LOCAL_FILE_PATH)
     else:
-        print("File not found.")
+        print("File not found")
     
-    # Keep the cmd window open
-    os.system("pause")
-
 if __name__ == "__main__":
     main()
