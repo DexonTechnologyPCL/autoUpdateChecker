@@ -21,7 +21,8 @@ def get_drive_file_info(file_id):
         print(f"Error: {response.status_code}")
         print(response.text)
         return None
-
+    
+#********************************************************************************************************************************
 def get_local_file_info(file_path):
     if os.path.exists(file_path):
         modified_time = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
@@ -29,7 +30,8 @@ def get_local_file_info(file_path):
     else:
         print(f"Error: Local file not found at {file_path}")
         return None
-
+    
+#********************************************************************************************************************************
 def download_file(url, destination):
     """
     Download a file from the given Google Drive URL to the specified destination.
@@ -58,6 +60,7 @@ def download_file(url, destination):
     except IOError as e:
         print(f"Error writing file: {e}")
 
+#********************************************************************************************************************************
 def check_file_update(drive_time, local_time):
     """
     Compare a local file with a file on Google Drive.
@@ -74,6 +77,7 @@ def check_file_update(drive_time, local_time):
     else:
         print("Unable to compare modification dates due to missing information")
 
+#********************************************************************************************************************************
 def runCheckAutoUpdate():
     parser = argparse.ArgumentParser(description="Check or download a file from Google Drive.")
     parser.add_argument("file_path", type=str, help="Path to the local file")
@@ -108,7 +112,8 @@ def runCheckAutoUpdate():
     elif args.action == '1':
         print("Downloading file...")
         download_file(GOOGLE_DRIVE_URL, LOCAL_FILE_PATH)
-    
+
+#********************************************************************************************************************************
 def main():
     runCheckAutoUpdate()
 
