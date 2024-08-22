@@ -2,8 +2,6 @@ import os
 import datetime
 import requests
 import argparse
-import io
-import win32api
 from pathlib import Path
 import pefile
 import re
