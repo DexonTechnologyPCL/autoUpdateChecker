@@ -3,8 +3,10 @@ import datetime
 import requests
 import argparse
 import io
-
-
+import win32api
+from pathlib import Path
+import pefile
+import re
 def get_drive_file_info(file_id):
     """
     get file date modified on google drive
@@ -112,6 +114,41 @@ def runCheckAutoUpdate():
     elif args.action == '1':
         print("Downloading file...")
         download_file(GOOGLE_DRIVE_URL, LOCAL_FILE_PATH)
+
+#********************************************************************************************************************************
+def get_file_description(file_path):
+    # Example path = Path('D:/Project/2024_026/DaconInspectionStudio/x64/Debug/DaconInspectionStudio.exe')
+    path = Path(file_path)
+    pe = pefile.PE(str(path))
+
+    file_info = []
+
+    # Extract the file description
+    for fileinfo in pe.FileInfo:
+        for entry in fileinfo:
+            if entry.Key == b'StringFileInfo':
+                for st in entry.StringTable:
+                    for key, value in st.entries.items():
+                        # if key.decode() == 'FileDescription':
+                            # print(f"File Description: {value.decode()}")
+                            # print(f"{key.decode()} : {value.decode()}")
+                        file_info.append(f"{key.decode()}: {value.decode()}")
+
+    # Join all the information into a single string
+    return "\n".join(file_info)
+    
+#********************************************************************************************************************************
+def extract_version(text, label):
+    # Function to extract version number
+    match = re.search(rf"{label}:\s*([\d\.]+)", text)
+    if match:
+        return match.group(1)
+    return None
+
+#********************************************************************************************************************************
+def version_tuple(version_str):
+    # Convert version string to a tuple of integers
+    return tuple(map(int, version_str.split('.')))
 
 #********************************************************************************************************************************
 def main():

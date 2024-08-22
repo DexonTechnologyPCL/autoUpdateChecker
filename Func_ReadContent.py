@@ -17,18 +17,21 @@ def read_public_google_drive_file(file_id):
         print(f"An error occurred: {e}")
         return None
     
+#********************************************************************************************************************************
 def runReadContent():
     # Usage
     file_id = '1tuEWr7LQ5_6CRzLxjghG4tNvvekKa0ZA'  # Replace with the actual file ID
     content = read_public_google_drive_file(file_id)
 
     if content:
-        print(content)
+        return content
     else:
         print("Failed to read the file.")
 
+#********************************************************************************************************************************
 def main():
-    runReadContent()
+    result = runReadContent()
+    print(result)  # Print the result in the main function
 
 if __name__ == "__main__":
     main()
