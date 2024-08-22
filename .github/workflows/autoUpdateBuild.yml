@@ -31,7 +31,6 @@ jobs:
           pip install requests
           pip install argparse
           pip install datetime
-          pip install pathlib
           pip install pefile
 
       - name: Install GitHub CLI
