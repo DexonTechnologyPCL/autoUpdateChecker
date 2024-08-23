@@ -8,30 +8,30 @@ def main():
     file_id = GOOGLE_DRIVE_URL.split('/')[5]  # Extract file ID from the link
 
     parser = argparse.ArgumentParser(description="Check or download a file from Google Drive.")
-    parser.add_argument("file_path", type=str, help="Path to the local file")
-    parser.add_argument("action", type=str, choices=['0', '1'], help="0 for check update, 1 for download")
+    parser.add_argument("action", type=int, choices=[0, 1], 
+                        help="0 for check update, 1 for download")
+    parser.add_argument("local_path", type=str, help="Path to the local file")
+    parser.add_argument("temp_path", type=str, nargs='?', default=None,
+                        help="Path to the temporary file (optional)")
     args = parser.parse_args()
-    LOCAL_FILE_PATH = args.file_path
 
-    temp_path = None
-
-    if args.action == '0':
+    if args.action == 0:
         print("Checking for updates...")
-        if os.path.exists(LOCAL_FILE_PATH):
+        if os.path.exists(args.local_path):
             try:
-                # Download the file to a temporary location
-                temp_path = download_file_to_temp(
+                # Use provided temp_path or generate one
+                temp_path = args.temp_path or download_file_to_temp(
                     f"https://drive.google.com/uc?id={file_id}", 
                     file_name="tempFile.exe"
                 )
-                # print(f"File downloaded to: {temp_path}")
+                print(f"File downloaded to: {temp_path}")
 
                 # Get file descriptions
                 drive_file_info = get_file_description(temp_path)
                 print("---Drive file Info---")
                 print(drive_file_info)
 
-                local_file_info = get_file_description(LOCAL_FILE_PATH)
+                local_file_info = get_file_description(args.local_path)
                 print("---Local file Info---")
                 print(local_file_info)
 
@@ -56,32 +56,27 @@ def main():
             except Exception as e:
                 print(f"An error occurred during version checking: {e}")
 
-            else:
-                print("Version comparison completed successfully.")
-
             finally:
-                # Clean up the temporary file and directory
-                if temp_path and os.path.exists(temp_path):
+                # Clean up the temporary file if it was auto-generated
+                if not args.temp_path and temp_path and os.path.exists(temp_path):
                     try:
-                        # Remove the temporary file
                         os.remove(temp_path)
-                        # print(f"Temporary file {temp_path} has been deleted.")
-                        
-                        # Remove the directory
                         temp_dir = os.path.dirname(temp_path)
                         if os.path.exists(temp_dir):
                             os.rmdir(temp_dir)
-                            # print(f"Temporary directory {temp_dir} has been deleted.")
-
                     except Exception as cleanup_error:
                         print(f"Failed to clean up temporary files: {cleanup_error}")
 
         else:
             print("Local file does not exist. Use action '1' to download.")
 
-    elif args.action == '1':
-        print("Downloading file...")
-        download_file(file_id, LOCAL_FILE_PATH)
+    elif args.action == 1:
+        if args.temp_path and os.path.exists(args.temp_path):
+            print(f"Moving file from {args.temp_path} to {args.local_path}...")
+            os.rename(args.temp_path, args.local_path)
+        else:
+            print("Downloading file...")
+            download_file(file_id, args.local_path)
 
 if __name__ == "__main__":
     main()
