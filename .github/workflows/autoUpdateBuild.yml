@@ -32,6 +32,7 @@ jobs:
           pip install argparse
           pip install datetime
           pip install pefile
+          pip install gdown
 
       - name: Install GitHub CLI
         run: |
