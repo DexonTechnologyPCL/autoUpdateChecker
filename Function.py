@@ -174,7 +174,7 @@ def download_file_to_temp(url, file_name=None):
         temp_file_path = os.path.join(temp_dir, file_name)
 
         # Use gdown to download the file to the specified path
-        gdown.download(url, temp_file_path, quiet=False)
+        gdown.download(url, temp_file_path, quiet=True)
 
         # Return the path to the downloaded file
         return temp_file_path

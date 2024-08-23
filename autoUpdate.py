@@ -24,7 +24,7 @@ def main():
                     f"https://drive.google.com/uc?id={file_id}", 
                     file_name="tempFile.exe"
                 )
-                print(f"File downloaded to: {temp_path}")
+                # print(f"File downloaded to: {temp_path}")
 
                 # Get file descriptions
                 drive_file_info = get_file_description(temp_path)
@@ -65,13 +65,13 @@ def main():
                     try:
                         # Remove the temporary file
                         os.remove(temp_path)
-                        print(f"Temporary file {temp_path} has been deleted.")
+                        # print(f"Temporary file {temp_path} has been deleted.")
                         
                         # Remove the directory
                         temp_dir = os.path.dirname(temp_path)
                         if os.path.exists(temp_dir):
                             os.rmdir(temp_dir)
-                            print(f"Temporary directory {temp_dir} has been deleted.")
+                            # print(f"Temporary directory {temp_dir} has been deleted.")
 
                     except Exception as cleanup_error:
                         print(f"Failed to clean up temporary files: {cleanup_error}")
