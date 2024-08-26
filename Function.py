@@ -8,14 +8,16 @@ import re
 import tempfile
 import gdown
 
-# GOOGLE_DRIVE_API = "AIzaSyBSB78H_UW2AoC-o_hmFlT0tIS0zAvXoOM"
-GOOGLE_DRIVE_API = ""
+GOOGLE_DRIVE_API_KEY = "AIzaSyBSB78H_UW2AoC-o_hmFlT0tIS0zAvXoOM"
+# GOOGLE_DRIVE_API_KEY = ""
+FOLDER_ID = '1dndJ51OxqA-d2yViyJ58T2rqjCQWGC7z'
+FILE_NAME = 'DexonInspectionStudio'
 #********************************************************************************************************************************
 def get_drive_file_info(file_id):
     """
     get file date modified on google drive
     """
-    url = f"https://www.googleapis.com/drive/v3/files/{file_id}?fields=modifiedTime&key={GOOGLE_DRIVE_API}"
+    url = f"https://www.googleapis.com/drive/v3/files/{file_id}?fields=modifiedTime&key={GOOGLE_DRIVE_API_KEY}"
     
     response = requests.get(url)
     
@@ -217,3 +219,38 @@ def runReadContent():
         return content
     else:
         print("Failed to read the file.")
+
+#********************************************************************************************************************************
+def GetFileIDFromFolderDrive():
+    """
+    This function searches for files in a specific Google Drive folder 
+    that match the given file name.
+
+    Parameters:
+    - folder_id (str): The ID of the Google Drive folder.
+    - file_name (str): The file name or part of the file name you are searching for.
+    - api_key (str): Your Google Drive API key.
+
+    Returns:
+    - list: A list of dictionaries with 'name' and 'id' of the matching files.
+    """
+    # Google Drive API URL for file search
+    url = f"https://www.googleapis.com/drive/v3/files?q='{FOLDER_ID}'+in+parents+and+name+contains+'{FILE_NAME}'+and+trashed=false&fields=files(id,name)&key={GOOGLE_DRIVE_API_KEY}"
+
+    try:
+        # Make the request to the API
+        response = requests.get(url)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            files = response.json().get('files', [])
+            if not files:
+                return []
+            else:
+                return [{'name': file['name'], 'id': file['id']} for file in files]
+        else:
+            print(f'An error occurred: {response.status_code} - {response.text}')
+            return None
+    except Exception as e:
+        print(f'An exception occurred: {e}')
+        return None

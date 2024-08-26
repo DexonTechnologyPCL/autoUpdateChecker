@@ -1,12 +1,8 @@
 import os
 import argparse
-from Function import get_file_description, extract_version, version_tuple, download_file_to_temp, download_file
-
-GOOGLE_DRIVE_URL = "https://drive.google.com/file/d/1cHShM97WtO5fkNKIUZCXWZqldlQZsFZ2/view?usp=sharing"
+from Function import get_file_description, extract_version, version_tuple, download_file_to_temp, download_file, GetFileIDFromFolderDrive
 
 def main():
-    file_id = GOOGLE_DRIVE_URL.split('/')[5]  # Extract file ID from the link
-
     parser = argparse.ArgumentParser(description="Check or download a file from Google Drive.")
     parser.add_argument("action", type=int, choices=[0, 1], 
                         help="0 for check update, 1 for download")
@@ -15,6 +11,14 @@ def main():
                         help="Path to the temporary file (optional)")
     args = parser.parse_args()
 
+    files = GetFileIDFromFolderDrive()
+    if files is not None:
+        if not files:
+            print('No files found.')
+        else:
+            for file in files:
+                file_id = file["id"]
+
     if args.action == 0:
         print("Checking for updates...")
         if os.path.exists(args.local_path):
@@ -22,7 +26,7 @@ def main():
                 # Use provided temp_path or generate one
                 temp_path = args.temp_path or download_file_to_temp(
                     f"https://drive.google.com/uc?id={file_id}", 
-                    file_name="tempFile.exe"
+                    file_name="DexonInspectionStudio.exe"
                 )
                 print(f"File downloaded to: {temp_path}")
 
@@ -43,7 +47,7 @@ def main():
                 if drive_version and local_version:
                     drive_version_tuple = version_tuple(drive_version)
                     local_version_tuple = version_tuple(local_version)
-                    
+                    print()
                     if drive_version_tuple > local_version_tuple:
                         print(f"Drive version {drive_version} is newer than Local version {local_version}.")
                     elif drive_version_tuple < local_version_tuple:
